@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>憩Bay餐酒館 (Chill Bar) - 官方實體菜單相冊與流暢翻頁系統</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FAF6F0;
+            color: #0F172A;
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            min-height: 100vh;
+        }
+        .macaron-card {
+            background: #FFFFFF;
+            border: 1.5px solid #F1E5D8;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(180, 130, 110, 0.08);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .macaron-card:hover {
+            border-color: #FFB5C5;
+            box-shadow: 0 14px 32px rgba(255, 75, 114, 0.12);
+            transform: translateY(-2px);
+        }
+        .strawberry-btn {
+            background: linear-gradient(135deg, #FF6B8B 0%, #FF8E53 100%);
+            color: #FFFFFF !important;
+            font-weight: 800;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(255, 107, 139, 0.35);
+            transition: all 0.2s ease;
+        }
+        .strawberry-btn:hover {
+            box-shadow: 0 10px 26px rgba(255, 107, 139, 0.55);
+            transform: translateY(-2px);
+        }
+        .menu-nav-pill {
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #64748B;
+            border: 1.5px solid #E2E8F0;
+            background: #FFFFFF;
+            border-radius: 14px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .menu-nav-pill.active {
+            background: #FFF0F3;
+            color: #E11D48;
+            border-color: #FF4B72;
+            box-shadow: 0 4px 14px rgba(255, 75, 114, 0.2);
+        }
+        .sidebar-item.active {
+            background-color: #FFF0F3;
+            border-left: 4px solid #FF4B72;
+            color: #E11D48;
+        }
+    </style>
+</head>
+<body class="flex flex-col lg:flex-row min-h-screen">
+
+    <!-- 🌟 側邊欄 Sidebar -->
+    <aside class="w-full lg:w-72 bg-[#FFFFFF] border-r border-[#F1E5D8] p-6 flex flex-col justify-between shadow-sm">
+        <div>
+            <!-- 🌟 憩Bay 官方霓虹店 LOGO -->
+            <div class="mb-6 text-center">
+                <div class="rounded-2xl p-1 bg-gradient-to-tr from-[#FF6B8B] via-[#F59E0B] to-[#10B981] shadow-lg shadow-pink-500/20 inline-block overflow-hidden">
+                    <img id="sidebar-logo" src="assets/logo.jpg" class="w-full max-w-[210px] rounded-xl object-cover" alt="憩Bay Chill Bar 官方 LOGO">
+                </div>
+                <h1 class="text-xl font-black tracking-wider text-[#0F172A] mt-2.5 flex items-center justify-center gap-1">
+                    <span>憩Bay</span><span class="text-[#FF4B72]">.ChillBar</span>
+                </h1>
+                <p class="text-[10px] font-extrabold text-[#F59E0B] tracking-widest uppercase">SMART BISTRO & LOUNGE</p>
+            </div>
+
+            <!-- 系統導覽 -->
+            <p class="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider mb-2.5">📂 系統核心模組導覽</p>
+            <nav class="space-y-2">
+                <button onclick="switchAppModule('menu')" id="mod-menu-btn" class="sidebar-item active w-full text-left px-4 py-3 rounded-xl text-sm font-bold flex items-center justify-between transition">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xl">📖</span>
+                        <span>官方實體菜單相冊 (6頁)</span>
+                    </div>
+                    <span class="text-[10px] bg-rose-100 text-[#E11D48] px-2 py-0.5 rounded-full font-black">流暢翻頁</span>
+                </button>
+
+                <button onclick="switchAppModule('pos')" id="mod-pos-btn" class="sidebar-item w-full text-left px-4 py-3 rounded-xl text-sm font-bold flex items-center justify-between text-gray-600 hover:bg-slate-50 transition">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xl">🍸</span>
+                        <span>吧檯點餐 POS (配方扣庫存)</span>
+                    </div>
+                    <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-black">45+品項</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="macaron-card p-4 mt-6 border-pink-200 bg-rose-50/30">
+            <div class="flex items-center space-x-2 text-xs font-bold text-rose-700">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+                <span>翻頁相冊 • 上下頁即時切換</span>
+            </div>
+            <p class="text-[11px] text-gray-500 mt-1">憩Bay 旗艦營運系統 v8.0</p>
+        </div>
+    </aside>
+
+    <!-- 💻 主操作區 -->
+    <main class="flex-1 p-6 lg:p-10 overflow-y-auto max-w-[1440px] mx-auto space-y-8">
+        
+        <!-- ========================================== -->
+        <!-- 模組 A：📖 官方實體菜單相冊 (修復上一頁/下一頁) -->
+        <!-- ========================================== -->
+        <div id="module-menu-sec" class="space-y-6">
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#F1E5D8] pb-6">
+                <div>
+                    <h2 class="text-3xl font-black text-[#0F172A] flex items-center gap-3">
+                        <span class="p-2.5 rounded-2xl bg-rose-50 text-[#FF4B72] border border-rose-200">📖</span>
+                        <span>憩Bay 官方完整實體菜單相冊 (Official Menu Book)</span>
+                    </h2>
+                    <p class="text-sm text-gray-500 mt-1 font-medium">點擊下方【快捷翻頁按鈕】或【上一頁 / 下一頁】，即可流暢翻閱全套 6 頁官方高清菜單！</p>
+                </div>
+            </header>
+
+            <!-- 🌟 快速跳頁標籤列 (Quick Page Pills) -->
+            <div class="macaron-card p-4 bg-white border border-rose-200">
+                <p class="text-xs font-black text-rose-700 uppercase tracking-wider mb-2.5">📌 快速點擊跳頁：</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="gotoPage(0)" id="pill-0" class="menu-nav-pill active">🌟 官方封面</button>
+                    <button onclick="gotoPage(1)" id="pill-1" class="menu-nav-pill">🥜 1. 滷味 & 主食</button>
+                    <button onclick="gotoPage(2)" id="pill-2" class="menu-nav-pill">🧃 2. 無酒精 & 炸物</button>
+                    <button onclick="gotoPage(3)" id="pill-3" class="menu-nav-pill">🍱 3. 精選套餐 & 加購</button>
+                    <button onclick="gotoPage(4)" id="pill-4" class="menu-nav-pill">🍸 4. 特色調酒 & 生啤</button>
+                    <button onclick="gotoPage(5)" id="pill-5" class="menu-nav-pill">🍾 5. 敲敲瓶裝 & 燒啤</button>
+                </div>
+            </div>
+
+            <!-- 翻頁控制大看板 -->
+            <div class="macaron-card p-6 border-2 border-rose-200">
+                <!-- 頂部翻頁指示列 -->
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                    <button onclick="prevPage()" id="btn-top-prev" class="strawberry-btn text-xs px-5 py-2.5 flex items-center gap-1.5">
+                        <span>⬅️</span> 上一頁
+                    </button>
+                    <div class="text-center">
+                        <span id="cur-page-indicator" class="text-base font-black text-rose-600">📖 第 1 / 6 頁：🌟 憩Bay Chill Bar 官方品牌封面</span>
+                    </div>
+                    <button onclick="nextPage()" id="btn-top-next" class="strawberry-btn text-xs px-5 py-2.5 flex items-center gap-1.5">
+                        下一頁 <span>➡️</span>
+                    </button>
+                </div>
+
+                <!-- 菜單圖片大圖展示區 -->
+                <div class="text-center bg-slate-900/5 p-3 rounded-2xl border border-slate-200">
+                    <img id="main-menu-image" src="assets/menu_cover.jpg" class="w-full max-w-[820px] mx-auto rounded-xl shadow-xl transition-all duration-300" alt="憩Bay 菜單頁面">
+                </div>
+
+                <!-- 底部翻頁指示列 -->
+                <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
+                    <button onclick="prevPage()" id="btn-bot-prev" class="strawberry-btn text-xs px-6 py-3 flex items-center gap-1.5">
+                        <span>⬅️</span> 返回上一頁
+                    </button>
+                    <p id="cur-page-desc" class="text-xs text-gray-500 font-semibold max-w-lg text-center">
+                        憩Bay Chill Bar 霓虹品牌視覺封面 • 冷氣開放 • 可帶外食 • 入店享用 (四國語言標示)
+                    </p>
+                    <button onclick="nextPage()" id="btn-bot-next" class="strawberry-btn text-xs px-6 py-3 flex items-center gap-1.5">
+                        翻至下一頁 <span>➡️</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 腳本邏輯 -->
+    <script>
+        var menuPages = [
+            {
+                file: "assets/menu_cover.jpg",
+                title: "🌟 憩Bay Chill Bar 官方品牌封面",
+                desc: "憩Bay Chill Bar 霓虹品牌視覺封面 • 冷氣開放 • 可帶外食 • 入店享用 (中/英/日/韓 四國語言標示)"
+            },
+            {
+                file: "assets/menu_p1.jpg",
+                title: "🥜 第 1 頁：經典秘製滷下酒菜 & 主食與分享料理",
+                desc: "秘製滷花生 ($90)、滷毛豆 ($80)、花生+毛豆雙拼 ($150)、滷甜不辣 ($75) ｜ 肉醬/青醬義大利麵 ($200)、紐澳良烤雞翅 ($230)、烤一夜干午仔魚 ($300)"
+            },
+            {
+                file: "assets/menu_p2.jpg",
+                title: "🧃 第 2 頁：無酒精特調飲品 & 微醺下酒炸物",
+                desc: "有機野莓洛神檸檬冰茶 ($120/$160)、有機爽身檸檬冰茶 ($120/$160)、椰子氣泡水 ($120)、可樂/雪碧 ($80)、蘇打水 ($80) ｜ 香脆薯條 ($100)、香酥雞塊 ($120)"
+            },
+            {
+                file: "assets/menu_p3.jpg",
+                title: "🍱 第 3 頁：精選套餐 & 超值加價購升級專區",
+                desc: "義大利麵+大杯無酒精飲 ($200)、義大利麵+微醺調酒 ($410)、一夜干+炸物雙拼+18天生啤大*2 ($980) ｜ +$60 滷味 / +$80 炸物 / +$195 烤雞翅"
+            },
+            {
+                file: "assets/menu_p4.jpg",
+                title: "🍸 第 4 頁：特色調酒、風味茶酒與生啤酒",
+                desc: "泰式奶茶酒 8% ($300)、紅心芭樂梅 8% ($250)、芭樂梅茶酒 8% ($250)、白桃茉莉 8% ($250)、薄荷蜂蜜柚子 8% ($250)、野莓洛神 4% ($220)、Mojito冰茶 4% ($220) ｜ 18天生啤、朝日生啤"
+            },
+            {
+                file: "assets/menu_p5.jpg",
+                title: "🍾 第 5 頁：敲敲瓶身感受微醺！精釀啤酒與韓式燒啤",
+                desc: "朝日瓶裝 ($160)、布希啤酒 ($210)、歸剛ㄟ零糖啤酒 ($220)、小滿冬瓜茶啤酒 ($220)、立秋東方美人茶啤酒 ($220)、貓頭鷹蘋果氣泡酒 ($220)、燒酒Somaek ($220)、美韓轟炸機組合 ($390)"
+            }
+        ];
+
+        var curPageIdx = 0;
+
+        function updateAlbumView() {
+            var p = menuPages[curPageIdx];
+            document.getElementById("main-menu-image").src = p.file;
+            document.getElementById("cur-page-indicator").innerText = "📖 第 " + (curPageIdx + 1) + " / " + menuPages.length + " 頁：" + p.title;
+            document.getElementById("cur-page-desc").innerText = p.desc;
+
+            // 更新 pill 樣式
+            for (var i = 0; i < menuPages.length; i++) {
+                var pill = document.getElementById("pill-" + i);
+                if (pill) {
+                    if (i === curPageIdx) {
+                        pill.classList.add("active");
+                    } else {
+                        pill.classList.remove("active");
+                    }
+                }
+            }
+
+            // 更新前後頁按鈕狀態
+            document.getElementById("btn-top-prev").disabled = (curPageIdx === 0);
+            document.getElementById("btn-bot-prev").disabled = (curPageIdx === 0);
+            document.getElementById("btn-top-next").disabled = (curPageIdx === menuPages.length - 1);
+            document.getElementById("btn-bot-next").disabled = (curPageIdx === menuPages.length - 1);
+        }
+
+        function nextPage() {
+            if (curPageIdx < menuPages.length - 1) {
+                curPageIdx++;
+                updateAlbumView();
+            }
+        }
+
+        function prevPage() {
+            if (curPageIdx > 0) {
+                curPageIdx--;
+                updateAlbumView();
+            }
+        }
+
+        function gotoPage(idx) {
+            curPageIdx = idx;
+            updateAlbumView();
+        }
+
+        function switchAppModule(m) {
+            // 切換邏輯
+            document.getElementById("module-menu-sec").classList.remove("hidden");
+        }
+
+        window.onload = function() {
+            updateAlbumView();
+        };
+    </script>
+</body>
+</html>

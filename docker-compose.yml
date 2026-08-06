@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  qibar-app:
+    build: .
+    container_name: qibar_chill_bar
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
